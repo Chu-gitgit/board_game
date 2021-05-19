@@ -20,6 +20,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 import org.tinylog.Logger;
+import util.javafx.ControllerHelper;
 
 import javax.inject.Inject;
 import java.io.IOException;
@@ -35,7 +36,7 @@ public class BoardGameController {
     private FXMLLoader fxmlLoader;
 
     @Inject
-    public GameResultDao gameResultDao;
+    private GameResultDao gameResultDao;
 
     @FXML
     private GridPane board;
@@ -146,11 +147,8 @@ public class BoardGameController {
 //        }
         Logger.debug("Saving result");
         gameResultDao.persist(createGameResult());
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/highscores.fxml"));
-        Parent root = fxmlLoader.load();
         Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
-        stage.setScene(new Scene(root));
-        stage.show();
+        ControllerHelper.loadAndShowFXML(fxmlLoader, "/fxml/highscores.fxml", stage);
     }
 
     private GameResult createGameResult() {

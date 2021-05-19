@@ -8,10 +8,10 @@ import java.util.List;
 /**
  * DAO class for the {@link GameResult} entity.
  */
-public class GameResultDao extends GenericJpaDao<GameResult> {
+public class GameResultDao extends GenericJpaDao<boardGame.results.GameResult> {
 
     public GameResultDao() {
-        super(GameResult.class);
+        super(boardGame.results.GameResult.class);
     }
 
     /**
@@ -23,8 +23,8 @@ public class GameResultDao extends GenericJpaDao<GameResult> {
      * spent for solving the puzzle
      */
     @Transactional
-    public List<GameResult> findBest(int n) {
-        return entityManager.createQuery("SELECT r FROM GameResult r WHERE r.solved = true ORDER BY r.duration ASC, r.created DESC", GameResult.class)
+    public List<boardGame.results.GameResult> findBest(int n) {
+        return entityManager.createQuery("SELECT r FROM GameResult r WHERE r.solved = true ORDER BY r.duration ASC, r.created DESC", boardGame.results.GameResult.class)
                 .setMaxResults(n)
                 .getResultList();
     }

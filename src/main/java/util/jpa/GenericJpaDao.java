@@ -1,5 +1,6 @@
 package util.jpa;
 
+import boardGame.results.GameResult;
 import com.google.inject.persist.Transactional;
 
 import javax.inject.Inject;
@@ -96,5 +97,4 @@ public abstract class GenericJpaDao<T> {
     public void update(T entity) {
         entityManager.merge(entity);
     }
-
 }

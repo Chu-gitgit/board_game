@@ -23,12 +23,16 @@ public class Game {
         board = new int[8][8];
     }
 
-    public static boolean clickable(int x, int y, int player) {
+    public static boolean clickable(int x, int y, int player) throws ArrayIndexOutOfBoundsException {
         if (player % 2 == 0) { //Check whether there is a number on the relative position.
             return board[x][y] == 0 && board[x][y + 1] == 0;
         } else {
-            return board[x][y] == 0 && board[x + 1][y] == 0;
+            try {
+                return board[x][y] == 0 && board[x + 1][y] == 0;
+            } catch (ArrayIndexOutOfBoundsException ignore) {
+            }
         }
+        return false;
     }
 
     public static boolean isWin(int player) {
