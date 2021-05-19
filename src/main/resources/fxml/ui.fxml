@@ -2,13 +2,13 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-<?import javafx.scene.text.Text?>
 
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" spacing="10.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="boardGame.javafx.controller.BoardGameController">
    <children>
@@ -39,35 +39,32 @@
       </GridPane>
       <HBox alignment="CENTER" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="100.0" prefWidth="200.0">
          <children>
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Steps: ">
+            <Label text="Steps: ">
                <font>
                   <Font size="24.0" />
                </font>
                <HBox.margin>
-                  <Insets right="50.0" />
+                  <Insets right="150.0" />
                </HBox.margin>
-            </Text>
-            <Text fx:id="stepsLabel" strokeType="OUTSIDE" strokeWidth="0.0" text="0">
+            </Label>
+            <Label fx:id="stepsLabel" text="0">
                <font>
                   <Font size="24.0" />
                </font>
-               <HBox.margin>
-                  <Insets left="50.0" />
-               </HBox.margin>
-            </Text>
+            </Label>
          </children>
       </HBox>
       <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
          <children>
-<!--            <Button fx:id="resetButton" alignment="CENTER" mnemonicParsing="false" onAction="#handleResetButton" text="Reset">-->
-<!--               <HBox.margin>-->
-<!--                  <Insets right="50.0" />-->
-<!--               </HBox.margin>-->
-<!--               <font>-->
-<!--                  <Font size="24.0" />-->
-<!--               </font>-->
-<!--            </Button>-->
-            <Button fx:id="giveupFinishButton" alignment="CENTER" mnemonicParsing="false" onAction="#handleGiveUpFinishButton" text="Give Up">
+            <Button fx:id="resetButton" alignment="CENTER" mnemonicParsing="false" onAction="#handleResetButton" text="Reset">
+               <HBox.margin>
+                  <Insets right="50.0" />
+               </HBox.margin>
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Button>
+            <Button fx:id="giveupFinishButton" alignment="CENTER" mnemonicParsing="false" onAction="#handleGiveUpFinishButton" text="Finish">
                <HBox.margin>
                   <Insets left="50.0" />
                </HBox.margin>

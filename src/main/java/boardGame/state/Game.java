@@ -7,6 +7,13 @@ public class Game {
     public static int boardLength = board.length;
 
     public static void addStep(int x, int y, int player) {
+        if (player % 2 == 0) { //Check whether there is a number on the relative position.
+            board[x][y] = player;
+            board[x][y + 1] = player;
+        } else {
+            board[x][y] = player;
+            board[x + 1][y] = player;
+        }
         board[x][y] = player;
         steps++;
     }
@@ -24,7 +31,7 @@ public class Game {
         }
     }
 
-    public static boolean isWin(int player){
+    public static boolean isWin(int player) {
         if (player % 2 == 0) {                                      //Player A: horizontal
             for (int i = 0; i < boardLength - 1; i++) {
                 for (int j = 0; j < boardLength; j++) {

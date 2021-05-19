@@ -1,5 +1,6 @@
 package boardGame.javafx.controller;
 
+import boardGame.results.GameResult;
 import boardGame.results.GameResultDao;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -13,15 +14,11 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
-import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.tinylog.Logger;
-import boardGame.results.GameResult;
-import boardGame.results.GameResultDao;
 import util.javafx.ControllerHelper;
 
 import javax.inject.Inject;
 import java.io.IOException;
-import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
@@ -50,7 +47,7 @@ public class HighScoreController {
     @FXML
     private void initialize() {
         Logger.debug("Loading high scores...");
-        List<GameResult> highScoreList = gameResultDao.findBest(10);
+        List<GameResult> highScoreList = gameResultDao.findBest(5);
 
         player.setCellValueFactory(new PropertyValueFactory<>("player"));
         steps.setCellValueFactory(new PropertyValueFactory<>("steps"));

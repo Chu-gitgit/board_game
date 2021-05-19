@@ -1,10 +1,16 @@
 package boardGame.javafx.controller;
 
+import boardGame.results.GameResult;
+import boardGame.results.GameResultDao;
 import boardGame.state.Game;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
@@ -14,30 +20,34 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 import org.tinylog.Logger;
-import util.javafx.ControllerHelper;
 
 import javax.inject.Inject;
 import java.io.IOException;
 
 public class BoardGameController {
 
+    @FXML
+    public Label stepsLabel;
     private String playerA;
     private String playerB;
 
     @Inject
     private FXMLLoader fxmlLoader;
 
+    @Inject
+    public GameResultDao gameResultDao;
+
     @FXML
     private GridPane board;
 
     @FXML
-    private Button resetButton;
+    public Button resetButton;
 
     @FXML
-    private Button giveupFinishButton;
+    public Button giveupFinishButton;
 
-    @FXML
-    private Label stepsLable;
+    public static IntegerProperty step = new SimpleIntegerProperty();
+
 
     @FXML
     private void initialize() {
@@ -48,6 +58,8 @@ public class BoardGameController {
                 board.add(square, j, i);
             }
         }
+        step.set(Game.steps);
+        stepsLabel.textProperty().bind(step.asString());
     }
 
     public void setPlayerA(String playerA) {
@@ -86,7 +98,7 @@ public class BoardGameController {
     }
 
     @FXML
-    private void handleMouseClick(MouseEvent event){
+    private void handleMouseClick(MouseEvent event) throws RuntimeException {
         var square = (StackPane) event.getSource();
         var row = GridPane.getRowIndex(square);
         var col = GridPane.getColumnIndex(square);
@@ -94,8 +106,8 @@ public class BoardGameController {
         Circle coin = (Circle) square.getChildren().get(0);
         coin.getFill();
 //       coin.setFill(nextColor(currentColor));
-        if (Game.clickable(col, row, Game.steps)) {
-            Game.addStep(col, row, Game.steps % 2);
+        if (Game.clickable(col, row, Game.steps % 2 == 0 ? 1 : 2)) {
+            Game.addStep(col, row, Game.steps % 2 == 0 ? 1 : 2);
             Logger.info("Steps: {}", Game.steps);
             if (Game.steps % 2 == 0) {
                 coin.setFill(Color.RED);
@@ -103,32 +115,50 @@ public class BoardGameController {
                 coin.setFill(Color.BLUE);
             }
             nextSquare(col, row, Game.steps);
-        }
-        if (Game.isWin(Game.steps)) {
-            Logger.info("Player {} is win!", Game.steps % 2 == 0 ? "A" : "B");
+            if (Game.isWin(Game.steps)) {
+                Logger.info("Continue.");
+            } else {
+                Logger.info("Player {} is win!", Game.steps % 2 == 1 ? "A" : "B");
+            }
+            step.set(Game.steps);
+            try {
+                stepsLabel.textProperty().set(step.toString());
+            } catch (RuntimeException ignored) {
+            }
         }
     }
 
-//    private void resetGame() {
-//        initialize();
-//    }
-//
-//    public void handleResetButton(ActionEvent actionEvent)  {
-//        Logger.debug("{} is pressed", ((Button) actionEvent.getSource()).getText());
-//        Logger.info("Resetting game");
-//        resetGame();
-//    }
+    public void handleResetButton(ActionEvent actionEvent) throws IOException {
+        Logger.debug("{} is pressed", ((Button) actionEvent.getSource()).getText());
+        Logger.info("Resetting game");
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/ui.fxml"));
+        Parent root = fxmlLoader.load();
+        Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+        stage.setScene(new Scene(root));
+        stage.show();
+    }
 
     public void handleGiveUpFinishButton(ActionEvent actionEvent) throws IOException {
         var buttonText = ((Button) actionEvent.getSource()).getText();
         Logger.debug("{} is pressed", buttonText);
-        if (buttonText.equals("Give Up")) {
-            Logger.info("The game has been given up");
-        }
+//        if (buttonText.equals("Give Up")) {
+//            Logger.info("The game has been given up");
+//        }
         Logger.debug("Saving result");
-//        gameResultDao.persist(createGameResult());
+        gameResultDao.persist(createGameResult());
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/highscores.fxml"));
+        Parent root = fxmlLoader.load();
         Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
-        ControllerHelper.loadAndShowFXML(fxmlLoader, "/fxml/highscores.fxml", stage);
+        stage.setScene(new Scene(root));
+        stage.show();
+    }
+
+    private GameResult createGameResult() {
+        return GameResult.builder()
+                .player(Game.steps % 2 == 1 ? playerA : playerB)
+                .solved(Game.isWin(Game.steps))
+                .steps(Game.steps)
+                .build();
     }
 
 }

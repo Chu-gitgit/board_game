@@ -39,6 +39,7 @@ public class GameResult {
      */
     private int steps;
 
+
     /**
      * The timestamp when the result was saved.
      */
