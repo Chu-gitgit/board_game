@@ -1,22 +1,43 @@
 package boardGame.javafx.controller;
 
 import boardGame.state.Game;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.stage.Stage;
 import org.tinylog.Logger;
+import util.javafx.ControllerHelper;
+
+import javax.inject.Inject;
+import java.io.IOException;
 
 public class BoardGameController {
 
     private String playerA;
     private String playerB;
 
+    @Inject
+    private FXMLLoader fxmlLoader;
+
     @FXML
     private GridPane board;
-//    private Label usernameLabel;
+
+    @FXML
+    private Button resetButton;
+
+    @FXML
+    private Button giveupFinishButton;
+
+    @FXML
+    private Label stepsLable;
 
     @FXML
     private void initialize() {
@@ -25,7 +46,6 @@ public class BoardGameController {
             for (var j = 0; j < board.getColumnCount(); j++) {
                 var square = createSquare();
                 board.add(square, j, i);
-
             }
         }
     }
@@ -65,9 +85,8 @@ public class BoardGameController {
 
     }
 
-
     @FXML
-    private void handleMouseClick(MouseEvent event) {
+    private void handleMouseClick(MouseEvent event){
         var square = (StackPane) event.getSource();
         var row = GridPane.getRowIndex(square);
         var col = GridPane.getColumnIndex(square);
@@ -75,13 +94,41 @@ public class BoardGameController {
         Circle coin = (Circle) square.getChildren().get(0);
         coin.getFill();
 //       coin.setFill(nextColor(currentColor));
-        Game.addStep();
-        if (Game.steps % 2 == 0) {
-            coin.setFill(Color.RED);
-        } else {
-            coin.setFill(Color.BLUE);
+        if (Game.clickable(col, row, Game.steps)) {
+            Game.addStep(col, row, Game.steps % 2);
+            Logger.info("Steps: {}", Game.steps);
+            if (Game.steps % 2 == 0) {
+                coin.setFill(Color.RED);
+            } else {
+                coin.setFill(Color.BLUE);
+            }
+            nextSquare(col, row, Game.steps);
         }
-        nextSquare(col, row, Game.steps);
+        if (Game.isWin(Game.steps)) {
+            Logger.info("Player {} is win!", Game.steps % 2 == 0 ? "A" : "B");
+        }
+    }
+
+//    private void resetGame() {
+//        initialize();
+//    }
+//
+//    public void handleResetButton(ActionEvent actionEvent)  {
+//        Logger.debug("{} is pressed", ((Button) actionEvent.getSource()).getText());
+//        Logger.info("Resetting game");
+//        resetGame();
+//    }
+
+    public void handleGiveUpFinishButton(ActionEvent actionEvent) throws IOException {
+        var buttonText = ((Button) actionEvent.getSource()).getText();
+        Logger.debug("{} is pressed", buttonText);
+        if (buttonText.equals("Give Up")) {
+            Logger.info("The game has been given up");
+        }
+        Logger.debug("Saving result");
+//        gameResultDao.persist(createGameResult());
+        Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+        ControllerHelper.loadAndShowFXML(fxmlLoader, "/fxml/highscores.fxml", stage);
     }
 
 }

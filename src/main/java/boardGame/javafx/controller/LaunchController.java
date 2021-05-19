@@ -13,11 +13,16 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
+import lombok.extern.slf4j.Slf4j;
 import org.tinylog.Logger;
+
+import javax.inject.Inject;
 
 //@Slf4j
 public class LaunchController {
 
+    @Inject
+    private FXMLLoader fxmlLoader;
     @FXML
     private TextField playerA;
     @FXML
@@ -33,12 +38,14 @@ public class LaunchController {
         } else {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/ui.fxml"));
             Parent root = fxmlLoader.load();
+            String player = playerA.getText();
             fxmlLoader.<BoardGameController>getController().setPlayerA(playerA.getText());
             fxmlLoader.<BoardGameController>getController().setPlayerB(playerB.getText());
             Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.show();
-            Logger.info("Username is set to {}, loading game scene.", playerA.getText());
+            Logger.info("Player A is set to {}, loading game scene.", playerA.getText());
+            Logger.info("Player B is set to {}, loading game scene.", playerB.getText());
         }
 
     }

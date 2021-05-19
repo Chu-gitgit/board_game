@@ -17,6 +17,7 @@ import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.tinylog.Logger;
 import boardGame.results.GameResult;
 import boardGame.results.GameResultDao;
+import util.javafx.ControllerHelper;
 
 import javax.inject.Inject;
 import java.io.IOException;
@@ -80,7 +81,7 @@ public class HighScoreController {
     public void handleRestartButton(ActionEvent actionEvent) throws IOException {
         Logger.debug("{} is pressed", ((Button) actionEvent.getSource()).getText());
         Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
-//        ControllerHelper.loadAndShowFXML(fxmlLoader, "/fxml/opening.fxml", stage);
+        ControllerHelper.loadAndShowFXML(fxmlLoader, "/fxml/launch.fxml", stage);
     }
 
 }
